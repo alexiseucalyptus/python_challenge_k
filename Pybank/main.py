@@ -1,7 +1,8 @@
-# Importing the csv module for handling CSV files
-import csv
+import os, csv
 
-# Function to calculate the average
+#file location
+input_file = Path("starter-code", "PyBank", "budget_data.csv")
+
 def average(numbers):
     return sum(numbers) / len(numbers)
 
