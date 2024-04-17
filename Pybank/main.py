@@ -7,8 +7,8 @@ file_path = "budget_data.csv"
 total_months = 0
 net_total = 0
 previous_profit_loss = 0
-profit_loss_changes = []
-months = []
+profit_loss_changes = 0
+months = 0
 
 # Read the CSV file
 with open(file_path, newline="") as csvfile:
