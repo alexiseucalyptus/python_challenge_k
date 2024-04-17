@@ -1,72 +1,66 @@
+# Importing the csv module for handling CSV files
 import csv
 
-# Define the file path
-file_path = "budget_data.csv"
+# Function to calculate the average
+def average(numbers):
+    return sum(numbers) / len(numbers)
 
-# Initialize variables to store financial data
+# Initializing variables
 total_months = 0
 net_total = 0
-previous_profit_loss = 0
-profit_loss_changes = 0
-months = 0
+previous_profit_loss = None
+changes = []
+greatest_increase = {"date": None, "amount": float("-inf")}
+greatest_decrease = {"date": None, "amount": float("inf")}
 
-# Read the CSV file
-with open(file_path, newline="") as csvfile:
-    csvreader = csv.reader(csvfile, delimiter=",")
-
-    # Skip the header row
-    header = next(csvreader)
-
-    # Iterate over each row in the CSV
-    for row in csvreader:
-        # Extract data from the row
+# Reading the CSV file
+with open('budget_data.csv', 'r') as file:
+    reader = csv.reader(file)
+    next(reader)  # Skipping the header row
+    for row in reader:
+        # Extracting date and profit/loss
         date = row[0]
         profit_loss = int(row[1])
 
-        # Calculate total number of months
+        # Calculating total months and net total
         total_months += 1
-
-        # Calculate net total amount of "Profit/Losses"
         net_total += profit_loss
 
-        # Calculate change in profit/loss
-        if total_months > 1:
+        # Calculating changes in profit/loss
+        if previous_profit_loss is not None:
             change = profit_loss - previous_profit_loss
-            profit_loss_changes.append(change)
-            months.append(date)
+            changes.append(change)
 
-        # Update previous profit/loss
+            # Checking for the greatest increase and decrease
+            if change > greatest_increase["amount"]:
+                greatest_increase["date"] = date
+                greatest_increase["amount"] = change
+            if change < greatest_decrease["amount"]:
+                greatest_decrease["date"] = date
+                greatest_decrease["amount"] = change
+
+        # Updating previous profit/loss
         previous_profit_loss = profit_loss
 
-# Calculate the average change in profit/loss
-average_change = sum(profit_loss_changes) / len(profit_loss_changes)
+#average change
+average_change = average(changes)
 
-# Find the greatest increase in profits (date and amount)
-greatest_increase = max(profit_loss_changes)
-greatest_increase_index = profit_loss_changes.index(greatest_increase)
-greatest_increase_date = months[greatest_increase_index]
-
-# Find the greatest decrease in profits (date and amount)
-greatest_decrease = min(profit_loss_changes)
-greatest_decrease_index = profit_loss_changes.index(greatest_decrease)
-greatest_decrease_date = months[greatest_decrease_index]
-
-# Print the analysis results
+#results
 print("Financial Analysis")
 print("------------------")
 print(f"Total Months: {total_months}")
 print(f"Total: ${net_total}")
 print(f"Average Change: ${average_change:.2f}")
-print(f"Greatest Increase in Profits: {greatest_increase_date} (${greatest_increase})")
-print(f"Greatest Decrease in Profits: {greatest_decrease_date} (${greatest_decrease})")
+print(f"Greatest Increase in Profits: {greatest_increase['date']} (${greatest_increase['amount']})")
+print(f"Greatest Decrease in Profits: {greatest_decrease['date']} (${greatest_decrease['amount']})")
 
-# Write the analysis results to a text file
-with open("financial_analysis.txt", "w") as txtfile:
-    txtfile.write("Financial Analysis\n")
-    txtfile.write("------------------\n")
-    txtfile.write(f"Total Months: {total_months}\n")
-    txtfile.write(f"Total: ${net_total}\n")
-    txtfile.write(f"Average Change: ${average_change:.2f}\n")
-    txtfile.write(f"Greatest Increase in Profits: {greatest_increase_date} (${greatest_increase})\n")
-    txtfile.write(f"Greatest Decrease in Profits: {greatest_decrease_date} (${greatest_decrease})\n")
-
+# Output of the analysis:
+"""
+Financial Analysis
+------------------
+Total Months: 86
+Total: $38382578
+Average Change: $-2315.12
+Greatest Increase in Profits: Feb-2012 ($1926159)
+Greatest Decrease in Profits: Sep-2013 ($-2196167)
+"""
